@@ -1,0 +1,47 @@
+diff --git a/ap/components/psa_mbedtls/mbedtls_port/configs/mbedtls_psa_crypto_config.h b/ap/components/psa_mbedtls/mbedtls_port/configs/mbedtls_psa_crypto_config.h
+index aa1cd072..04f1f5af 100755
+--- a/ap/components/psa_mbedtls/mbedtls_port/configs/mbedtls_psa_crypto_config.h
++++ b/ap/components/psa_mbedtls/mbedtls_port/configs/mbedtls_psa_crypto_config.h
+@@ -1993,7 +1993,7 @@ extern void tls_mbedtls_mem_free(void *ptr);
+  *
+  * Uncomment this to enable support for use_srtp extension.
+  */
+-//#define MBEDTLS_SSL_DTLS_SRTP
++#define MBEDTLS_SSL_DTLS_SRTP
+ 
+ /**
+  * \def MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
+diff --git a/ap/include/posix/time.h b/ap/include/posix/time.h
+index aeaee028..f7f192d0 100755
+--- a/ap/include/posix/time.h
++++ b/ap/include/posix/time.h
+@@ -54,7 +54,9 @@ extern "C" {
+  * @name Clock identifiers.
+  */
+ /**@{ */
++#ifndef CLOCK_REALTIME
+ #define CLOCK_REALTIME     0     /**< The identifier of the system-wide clock measuring real time. */
++#endif
+ #define CLOCK_MONOTONIC    1     /**< The identifier for the system-wide monotonic clock.*/
+ /**@} */
+ 
+@@ -62,6 +64,9 @@ extern "C" {
+  * @name A number used to convert the value returned by the clock() function into seconds.
+  */
+ /**@{ */
++#ifdef CLOCKS_PER_SEC
++#undef CLOCKS_PER_SEC
++#endif
+ #define CLOCKS_PER_SEC    ( ( clock_t ) configTICK_RATE_HZ )
+ /**@} */
+ 
+@@ -71,6 +76,9 @@ extern "C" {
+  * For functions taking timer objects, this refers to the clock associated with the timer.
+  */
+ /**@{ */
++#ifdef TIMER_ABSTIME
++#undef TIMER_ABSTIME
++#endif
+ #define TIMER_ABSTIME    0x01
+ /**@} */
+ 

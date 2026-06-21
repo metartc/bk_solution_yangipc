@@ -1,0 +1,13 @@
+menu "INTEGRATION_YANGIPC"
+
+    config INTEGRATION_YANGIPC
+        depends on VOICE_SERVICE && VOICE_READ_SERVICE && VOICE_WRITE_SERVICE
+        bool "YangIPC integration"
+        default n
+    config YANGENCODER
+        bool "Support yangencoder"
+        default n
+    config YANGSIGNAL
+        bool "Support yangsignal"
+        default n
+endmenu
