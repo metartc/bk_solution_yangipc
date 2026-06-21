@@ -96,7 +96,6 @@ make bk7258
 **ap_main.c：**
 
 ```c
-//是否支持datachannel
 void yang_init_ipcConfig(YangIpcConfig* config){
     config->audioDirection=1;// 0:单向直播 1:对讲
     
