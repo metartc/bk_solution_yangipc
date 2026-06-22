@@ -39,7 +39,7 @@ int main(void)
     yangipc_core_init();
 #endif
 	
-    yangipc_wifi_sta_connect("yangyl", "renfeng5188");
+    yangipc_wifi_sta_connect("ssid", "password");
     //yangipc_wifi_sta_connect("BK-SZ", "sundray123");
 #if Yang_Enable_Cmd
     cli_yang_ipc_init();
