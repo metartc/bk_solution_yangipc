@@ -19,15 +19,27 @@
 
 烧录流程参考 `烧录代码 <https://docs.bekencorp.com/arminodoc/bk_avdk_smp/smp_doc/bk7258/zh_CN/v3.0.1/get-started/index.html#id7>`_
 
-在本工程目录下编译：
-
 ```bash
+# 创建项目目录
+mkdir -p ~/armino && cd ~/armino
+
+# 下载或者克隆 SDK (请根据芯片选择对应分支/版本)
+# BK7258 推荐版本: 3.1.9
+# BK7259 推荐版本: 4.0
+https://gitlab.bekencorp.com/armino/bk_avdk_smp
+or 
+https://github.com/bekencorp/bk_avdk_smp
+
+# 补丁
+打上 `sdk_patch` 目录的补丁，参考3.1 bk_avdk_smp 配置
+
+# 编译
 cd bk_avdk_smp/bk_solution_yangipc/projects/yangipc
 make clean
 make bk7258
 ```
 
-编译时会自动应用 `sdk_patch` 目录下的补丁。编译生成的烧录 bin 文件路径：``projects/yangipc/build/bk7258/yangipc/package/all-app.bin``
+编译生成的烧录 bin 文件路径：``projects/yangipc/build/bk7258/yangipc/package/all-app.bin``
 
 ### 2.3 基本操作流程
 1. 设备上电启动
@@ -78,7 +90,6 @@ make bk7258
 #endif
 #define TIMER_ABSTIME    0x01
 ```
-
 #### 3.1.2 ap/components/psa_mbedtls/mbedtls_port/configs/mbedtls_psa_crypto_config.h
 
 第 1996 行，去掉注释并启用 DTLS SRTP：
@@ -90,7 +101,6 @@ make bk7258
 ```c
 #define MBEDTLS_SSL_DTLS_SRTP
 ```
-
 ### 3.2 yangipc 配置文件
 
 **ap_main.c：**
@@ -119,7 +129,6 @@ void yang_init_ipcConfig(YangIpcConfig* config){
 
 yangipc_wifi_sta_connect("ssid", "password");//连接wifi网络
 ```
-
 ### 3.3 yangipc启动
 
 ```bash
@@ -146,4 +155,12 @@ void setIceServer(char* ip,int32_t port,char* username,char* passwork);
 void setMqttServer(bool isTls,char* ip,int32_t port,char* username,char* password);
 
 ```
+# 4 云端
+云端需安装mosquitto和coturn两个服务器软件
+## 4.1 mosquitto
+https://mosquitto.org/download/
+## 4.2 coturn
+https://github.com/coturn/coturn
+
+
 
