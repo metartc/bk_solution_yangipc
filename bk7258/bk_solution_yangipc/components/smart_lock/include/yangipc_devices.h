@@ -8,7 +8,8 @@
 #include "wifi_transfer.h"
 #include "components/bk_display.h"
 
-
+//#define YANG_ENABLE_LCD CONFIG_YANG_ENABLE_LCD
+#define YANG_ENABLE_LCD 0
 typedef struct
 {
     uint16_t id;
@@ -45,17 +46,21 @@ typedef struct
 } db_device_info_t;
 
 int yangipc_get_supported_camera_devices(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb);
-int yangipc_get_supported_lcd_devices(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb);
-int yangipc_get_lcd_status(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb);
+
 void yangipc_devices_deinit(void);
 int yangipc_devices_init(void);
 
 int yangipc_camera_turn_on(camera_parameters_t *parameters);
 int yangipc_camera_turn_off(void);
 
-int yangipc_display_turn_on(display_parameters_t *parameters);
-int yangipc_display_turn_off(void);
+int yangipc_camera_idr_rest(void);
 
+#if YANG_ENABLE_LCD
+	int yangipc_get_supported_lcd_devices(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb);
+	int yangipc_get_lcd_status(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb);
+	int yangipc_display_turn_on(display_parameters_t *parameters);
+	int yangipc_display_turn_off(void);
+#endif
 
 /**
  * @brief      开启视频传输功能

@@ -48,7 +48,7 @@ endif()#CONFIG_INTEGRATION_YANGIPC
 
 endif()
 
-set(priv_req multimedia bk_display media_utils wifi_transfer avdk_utils lwip_intf_v2_1 bk_wifi_driver cs2p2p bt bk_video_pipeline bk_camera)
-
+#set(priv_req multimedia bk_display media_utils wifi_transfer avdk_utils lwip_intf_v2_1 bk_wifi_driver cs2p2p bt bk_video_pipeline bk_camera)
+set(priv_req multimedia media_utils wifi_transfer avdk_utils lwip_intf_v2_1 bk_wifi_driver cs2p2p bt bk_video_pipeline bk_camera)
 armino_component_register(SRCS "${srcs}" INCLUDE_DIRS "${incs}" PRIV_REQUIRES "${priv_req}"
 )

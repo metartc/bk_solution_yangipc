@@ -14,10 +14,10 @@
 #define LOGD(...) BK_LOGD(TAG, ##__VA_ARGS__)
 #define LOGV(...) BK_LOGV(TAG, ##__VA_ARGS__)
 
-
+#if YANG_ENABLE_LCD
 extern const jpeg_callback_t jpeg_cbs;
 extern const decode_callback_t decode_cbs;
-
+#endif
 static frame_buffer_t *h264e_frame_malloc(uint32_t size)
 {
     // V2版本：生产者申请帧
@@ -48,13 +48,15 @@ static const bk_h264e_callback_t yangipc_h264e_cbs =
 int yangipc_h264_encode_turn_on(db_device_info_t *info, camera_parameters_t *parameters)
 {
     avdk_err_t ret = AVDK_ERR_INVAL;
-    bk_video_pipeline_config_t video_pipeline_config = {0};
-    bk_video_pipeline_h264e_config_t h264e_config = {0};
 
+    bk_video_pipeline_h264e_config_t h264e_config = {0};
+#if YANG_ENABLE_LCD
+    bk_video_pipeline_config_t video_pipeline_config = {0};
     frame_queue_v2_register_consumer(IMAGE_MJPEG, CONSUMER_DECODER);
 
     video_pipeline_config.jpeg_cbs = &jpeg_cbs;
     video_pipeline_config.decode_cbs = &decode_cbs;
+
     if (info->video_pipeline_handle == NULL)
     {
         ret = bk_video_pipeline_new(&info->video_pipeline_handle, &video_pipeline_config);
@@ -86,7 +88,7 @@ int yangipc_h264_encode_turn_on(db_device_info_t *info, camera_parameters_t *par
     {
         h264e_config.sw_rotate_angle = ROTATE_NONE;
     }
-
+#endif
     h264e_config.width = parameters->width;
     h264e_config.height = parameters->height;
     h264e_config.fps = FPS30;
@@ -116,7 +118,7 @@ int yangipc_camera_open(db_device_info_t *info, camera_parameters_t *parameters)
         LOGE("yangipc not support transfer MJPEG stream, please use doorviewer project\n");
         return AVDK_ERR_UNSUPPORTED;
     }
-
+#if YANG_ENABLE_LCD
     if (parameters->id == UVC_DEVICE_ID)
     {
         info->cam_type = UVC_CAMERA;
@@ -127,6 +129,10 @@ int yangipc_camera_open(db_device_info_t *info, camera_parameters_t *parameters)
         info->cam_type = DVP_CAMERA;
         info->handle = dvp_camera_turn_on(parameters);
     }
+#else
+    info->cam_type = DVP_CAMERA;
+    info->handle = dvp_camera_turn_on(parameters);
+#endif
 
     if (info->handle == NULL)
     {
@@ -137,7 +143,7 @@ int yangipc_camera_open(db_device_info_t *info, camera_parameters_t *parameters)
     {
         ret = AVDK_ERR_OK;
     }
-
+#if YANG_ENABLE_LCD
     if (info->cam_type == UVC_CAMERA)
     {
         ret = yangipc_h264_encode_turn_on(info, parameters);
@@ -154,7 +160,7 @@ int yangipc_camera_open(db_device_info_t *info, camera_parameters_t *parameters)
     }
 
     LOGD("%s success\n", __func__);
-
+#endif
     return ret;
 }
 
@@ -171,7 +177,7 @@ int yangipc_camera_close(db_device_info_t *info)
             return AVDK_ERR_GENERIC;
         }
     }
-
+#if YANG_ENABLE_LCD
     if (info->cam_type == UVC_CAMERA)
     {
         ret = uvc_camera_turn_off(info->handle);
@@ -185,6 +191,9 @@ int yangipc_camera_close(db_device_info_t *info)
     {
         frame_queue_v2_unregister_consumer(IMAGE_MJPEG, CONSUMER_DECODER);
     }
+#else
+    ret = dvp_camera_turn_off(info->handle);
+#endif
 
     return ret;
 }

@@ -139,3 +139,8 @@ avdk_err_t dvp_camera_turn_off(bk_camera_ctlr_handle_t handle)
 
     return ret;
 }
+#if !YANG_ENABLE_LCD
+bk_err_t bk_jpeg_enc_global_soft_reset(uint8_t enable){
+	return 0;
+}
+#endif

@@ -4,7 +4,7 @@
 #include <common/bk_include.h>
 #include <components/bk_display.h>
 #include <yangipc_devices.h>
-
+#if YANG_ENABLE_LCD
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -58,5 +58,5 @@ bool yuv_display_is_running(void);
 #ifdef __cplusplus
 }
 #endif
-
+#endif
 #endif /* __YUV_DISPLAY_H__ */

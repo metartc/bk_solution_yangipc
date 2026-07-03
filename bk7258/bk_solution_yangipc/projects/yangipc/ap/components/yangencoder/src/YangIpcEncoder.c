@@ -109,7 +109,7 @@ static void yang_bk_video_sendMsgToEncoder(void *psession,
 		return;
 
 	if (request == Yang_Req_Sendkeyframe || request == Yang_Req_Connected) {
-
+		session->sendKeyframe=yangtrue;
 		yang_trace("BK_Encoder_RequestIDR\n");
 	} else if (request == Yang_Req_HighLostPacketRate) {
 
@@ -223,7 +223,7 @@ static void yang_bk_video_thread(beken_thread_arg_t obj){
 		}
 
 		if(session->sendKeyframe){
-			yang_bk_video_sendMsgToEncoder(session,Yang_Req_Sendkeyframe);
+			yangipc_camera_idr_rest();		
 			session->sendKeyframe=yangfalse;
 		}
 
@@ -268,7 +268,7 @@ static int32_t yang_bk_video_start(void *psession) {
 		return Yang_Ok;
 
 	err=rtos_create_thread(&session->threadId,6,"yang_ipcEncoder",
-				(beken_thread_function_t)yang_bk_video_thread,1024*8,(beken_thread_arg_t)session);
+				(beken_thread_function_t)yang_bk_video_thread,1024*4,(beken_thread_arg_t)session);
 	if (err) 
 		yang_error("YangThread::start could not start thread");
 

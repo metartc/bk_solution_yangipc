@@ -379,10 +379,11 @@ void yangipc_transmission_cmd_recive_callback(db_channel_t *channel, uint16_t se
 
         }
         break;
-
+#if YANG_ENABLE_LCD
         case DBCMD_SET_LCD_TURN_ON:
         {
-            display_parameters_t parameters = {0};
+
+        	display_parameters_t parameters = {0};
             STREAM_TO_UINT16(parameters.id, p);
             STREAM_TO_UINT16(parameters.rotate_angle, p);
             STREAM_TO_UINT16(parameters.pixel_format, p);
@@ -412,7 +413,7 @@ void yangipc_transmission_cmd_recive_callback(db_channel_t *channel, uint16_t se
             yangipc_get_lcd_status(cmd.opcode, channel, yangipc_transmission_send);
         }
         break;
-
+#endif
         case DBCMD_PNG:
         {
             yangipc_transmission_event_report(channel, cmd.opcode, EVT_STATUS_OK, EVT_FLAGS_COMPLETE);

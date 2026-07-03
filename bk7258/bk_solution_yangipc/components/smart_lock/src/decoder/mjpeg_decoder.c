@@ -4,7 +4,7 @@
 #include <components/bk_display.h>
 #include <components/bk_video_pipeline/bk_video_pipeline.h>
 #include "yuv_display/yuv_display.h"
-
+#if YANG_ENABLE_LCD
 #define TAG "db_dec"
 
 #define LOGI(...) BK_LOGW(TAG, ##__VA_ARGS__)
@@ -293,3 +293,6 @@ int mjpeg_decode_close(db_device_info_t *info)
     LOG_DEBUG("%s: mjpeg decoder close complete\n", __func__);
     return ret;
 }
+
+#endif
+

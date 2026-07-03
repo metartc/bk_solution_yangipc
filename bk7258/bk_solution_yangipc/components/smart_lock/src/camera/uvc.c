@@ -3,7 +3,7 @@
 #include "camera/camera.h"
 #include "decoder/decoder.h"
 #include "frame_buffer.h"
-
+#if YANG_ENABLE_LCD
 #include <components/usb_types.h>
 #include <components/bk_camera_ctlr.h>
 #include <components/usbh_hub_multiple_classes_api.h>
@@ -446,3 +446,5 @@ avdk_err_t uvc_camera_turn_off(bk_camera_ctlr_handle_t handle)
 
     return ret;
 }
+
+#endif

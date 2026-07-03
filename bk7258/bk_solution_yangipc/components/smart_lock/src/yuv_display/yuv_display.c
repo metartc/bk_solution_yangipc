@@ -34,7 +34,7 @@
 #else
 #define LOG_DEBUG(...) do {} while(0)
 #endif
-
+#if YANG_ENABLE_LCD
 // YUV display task structure
 typedef struct
 {
@@ -564,3 +564,4 @@ bool yuv_display_is_running(void)
     return (s_yuv_display != NULL && s_yuv_display->task_running);
 }
 
+#endif

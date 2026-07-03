@@ -48,11 +48,47 @@ typedef enum
 extern const dvp_sensor_config_t **get_sensor_config_devices_list(void);
 extern int get_sensor_config_devices_num(void);
 
+db_device_info_t *db_device_info = NULL;
+int yangipc_devices_set_camera_transfer_callback(void *cb)
+{
+    if (db_device_info)
+    {
+        db_device_info->video_transfer_cb = cb;
+    }
+
+    return AVDK_ERR_OK;
+}
+int yangipc_get_supported_camera_devices(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb)
+{
+    db_evt_head_t *evt = os_malloc(sizeof(db_evt_head_t) + DEVICE_RESPONSE_SIZE);
+    char *p = (char *)(evt + 1);
+
+    evt->opcode = opcode;
+    evt->status = EVT_STATUS_OK;
+    evt->flags = EVT_FLAGS_CONTINUE;
+
+    LOGD("DBCMD_GET_CAMERA_SUPPORTED_DEVICES\n");
+
+    os_memset(p, 0, DEVICE_RESPONSE_SIZE);
+
+    sprintf(p, "{\"name\": \"%s\", \"id\": \"%d\", \"type\": \"UVC\", \"ppi\":[\"%dX%d\"]}",
+            "UVC",
+            UVC_DEVICE_ID,
+            0,
+            0);
+    evt->length = CHECK_ENDIAN_UINT16(strlen(p));
+    evt->flags = EVT_FLAGS_COMPLETE;
+    yangipc_transmission_pack_send(channel, (uint8_t *)evt, sizeof(db_evt_head_t) + evt->length, cb);
+
+    os_free(evt);
+
+    return 0;
+}
+
+#if YANG_ENABLE_LCD
+
 extern const lcd_device_t lcd_device_custom_st7701sn;
 extern const lcd_device_t lcd_device_custom_st7796s;
-
-db_device_info_t *db_device_info = NULL;
-
 
 static avdk_err_t yangipc_lcd_backlight_open(uint8_t bl_io)
 {
@@ -82,42 +118,10 @@ static avdk_err_t yangipc_lcd_ldo_close(uint8_t ldo_io)
     return AVDK_ERR_OK;
 }
 
-int yangipc_devices_set_camera_transfer_callback(void *cb)
-{
-    if (db_device_info)
-    {
-        db_device_info->video_transfer_cb = cb;
-    }
 
-    return AVDK_ERR_OK;
-}
 
-int yangipc_get_supported_camera_devices(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb)
-{
-    db_evt_head_t *evt = os_malloc(sizeof(db_evt_head_t) + DEVICE_RESPONSE_SIZE);
-    char *p = (char *)(evt + 1);
 
-    evt->opcode = opcode;
-    evt->status = EVT_STATUS_OK;
-    evt->flags = EVT_FLAGS_CONTINUE;
 
-    LOGD("DBCMD_GET_CAMERA_SUPPORTED_DEVICES\n");
-
-    os_memset(p, 0, DEVICE_RESPONSE_SIZE);
-
-    sprintf(p, "{\"name\": \"%s\", \"id\": \"%d\", \"type\": \"UVC\", \"ppi\":[\"%dX%d\"]}",
-            "UVC",
-            UVC_DEVICE_ID,
-            0,
-            0);
-    evt->length = CHECK_ENDIAN_UINT16(strlen(p));
-    evt->flags = EVT_FLAGS_COMPLETE;
-    yangipc_transmission_pack_send(channel, (uint8_t *)evt, sizeof(db_evt_head_t) + evt->length, cb);
-
-    os_free(evt);
-
-    return 0;
-}
 
 int yangipc_get_supported_lcd_devices(int opcode, db_channel_t *channel, yangipc_transmission_send_t cb)
 {
@@ -195,7 +199,7 @@ int yangipc_get_lcd_status(int opcode, db_channel_t *channel, yangipc_transmissi
 
     return 0;
 }
-
+#endif
 static void yangipc_send_flash_op_state_callback(uint32_t state)
 {
     db_device_info_t *info = db_device_info;
@@ -365,6 +369,13 @@ int yangipc_video_transfer_turn_off(void)
     return ret;
 }
 
+int yangipc_camera_idr_rest(){
+	return db_device_info->handle->ioctlr(db_device_info->handle,DVP_IOCTL_CMD_H264_IDR_RESET,NULL);
+}
+
+
+#if YANG_ENABLE_LCD
+
 int yangipc_display_turn_on(display_parameters_t *parameters)
 {
     int ret = BK_FAIL;
@@ -492,6 +503,7 @@ int yangipc_display_turn_off(void)
     LOGD("%s success\n", __func__);
     return ret;
 }
+#endif
 
 int yangipc_devices_init(void)
 {

@@ -2,7 +2,7 @@
 
 #include <components/bk_display_types.h>
 #include <yangipc_devices.h>
-
+#if YANG_ENABLE_LCD
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -15,4 +15,5 @@ void mjpeg_decoder_reset(void);
 
 #ifdef __cplusplus
 }
+#endif
 #endif
