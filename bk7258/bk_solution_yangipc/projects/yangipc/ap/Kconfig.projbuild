@@ -4,6 +4,15 @@ menu "INTEGRATION_YANGIPC"
         depends on VOICE_SERVICE && VOICE_READ_SERVICE && VOICE_WRITE_SERVICE
         bool "YangIPC integration"
         default n
+    config YANGIPC_TXPOOL
+        bool "yangipc_txpool"
+        default n
+    config YANGIPC_TXPOOL_SIZE
+        int "yangipc_txpool_size"
+        default 10
+    config YANGIPC_TXPOOL_PAYLOAD_SIZE
+        int "yangipc_txpool_payload_size"
+        default 2208
     config YANGENCODER
         bool "Support yangencoder"
         default n

@@ -182,6 +182,7 @@ int webrtc_voice_send_callback(unsigned char *data, unsigned int len, void *args
 
 
 static void yang_bk_video_thread(beken_thread_arg_t obj){
+	uint32_t baseTs=0;
 	frame_buffer_t *frame;
 	YangBkIpcVideo *session = (YangBkIpcVideo*) obj;
 
@@ -198,6 +199,7 @@ static void yang_bk_video_thread(beken_thread_arg_t obj){
 		if(session->codecEnable.session&&session->codecEnable.enable){
 			if(!session->codecEnable.enable(session->codecEnable.session)){
 				session->hasConnected=yangfalse;
+				rtos_delay_milliseconds(5);
 				continue;
 			}
 		}
@@ -207,6 +209,7 @@ static void yang_bk_video_thread(beken_thread_arg_t obj){
 			if(g_yang_session==NULL)
 				g_yang_session=session;
 			yang_init_data(&session->audioData);
+			baseTs=0;
 		}
 
 		if(session->audioData.audioSize>=Yang_Audio_FrameSize){
@@ -233,8 +236,9 @@ static void yang_bk_video_thread(beken_thread_arg_t obj){
 			frame_queue_v2_release_frame(IMAGE_H264, CONSUMER_TRANSMISSION, frame);
 			continue;
 		}
+		if(baseTs==0) baseTs=frame->timestamp;
 		
-		videoFrame.dts = videoFrame.pts = frame->timestamp;
+		videoFrame.dts = videoFrame.pts = frame->timestamp-baseTs;
 
 		videoFrame.frametype = (frame->h264_type & FRAME_FLAG_IS_I_FRAME) != 0?1:0;
 
