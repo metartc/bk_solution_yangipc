@@ -33,6 +33,7 @@ typedef struct{
 	YangIpcConfig config;
 }YangBkSession;
 
+extern int32_t yangipc_init_txPoolMem();
 
 static void yang_task(beken_thread_arg_t data)
 {
@@ -61,6 +62,11 @@ static void yang_task(beken_thread_arg_t data)
 	
 	yangipc_audio_turn_on(&audio_parameters);
 #endif
+
+#if CONFIG_YANGIPC_TXPOOL
+	yangipc_init_txPoolMem();
+#endif
+
 #if Yang_Video
 	//open lcd
 	// display_parameters_t display_parameters = {LCD_DEVICE_ST7701SN, 90, 0};
@@ -106,7 +112,7 @@ int32_t yang_ipc()
 								4,
 								"yang_ipc",
 								(beken_thread_function_t)yang_task,
-								1024 * 16,NULL);
+								1024 * 8,NULL);
 								//(beken_thread_arg_t)NULL);
 	if (ret != kNoErr)
 	{

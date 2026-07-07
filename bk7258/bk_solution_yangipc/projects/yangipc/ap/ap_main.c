@@ -25,8 +25,8 @@ void yang_init_ipcConfig(YangIpcConfig* config){
 
     config->mqttPort=1883;
     strcpy(config->mqttServerIP, "192.168.0.104");
-    memset(config->mqttUserName,0,sizeof(config->mqttUserName));
-    memset(config->mqttPassword,0,sizeof(config->mqttPassword));
+    strcpy(config->mqttUserName, "");
+    strcpy(config->mqttPassword, "");
 }
 
 int main(void)
@@ -40,7 +40,7 @@ int main(void)
 #endif
 	
     yangipc_wifi_sta_connect("ssid", "password");
-    //yangipc_wifi_sta_connect("BK-SZ", "sundray123");
+    
 #if Yang_Enable_Cmd
     cli_yang_ipc_init();
 #else
