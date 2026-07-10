@@ -34,6 +34,7 @@ typedef struct{
 }YangBkSession;
 
 extern int32_t yangipc_init_txPoolMem();
+extern void yangipc_free_TxPoolMem();
 
 static void yang_task(beken_thread_arg_t data)
 {
@@ -94,6 +95,9 @@ static void yang_task(beken_thread_arg_t data)
 		psram_free(yang_ipc);
 	}
 	psram_free(config);
+#if CONFIG_YANGIPC_TXPOOL
+	yangipc_free_TxPoolMem();
+#endif
 #if Yang_Audio
 		// yangipc_display_turn_off();
 	yangipc_audio_turn_off();
